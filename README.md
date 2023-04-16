@@ -4,6 +4,9 @@
 
 This repo contains the code for the delta-chunker binary. This binary is used to chunk files into smaller pieces (CAR files) for use with Delta deal making engine.
 
+![image](https://user-images.githubusercontent.com/4479171/232341521-702b0530-5462-46e7-8393-70225369b368.png)
+
+
 ## Features
 - Tracks all the files in a directory and chunks them into CAR files
 - All CAR files can be streamed directly to a live delta instance
