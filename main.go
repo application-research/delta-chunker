@@ -34,6 +34,7 @@ func main() {
 
 	// cli
 	commands = append(commands, cmd.CarCmd()...)
+	commands = append(commands, cmd.CarChunkRunnerCmd()...)
 
 	app := &cli.App{
 		Commands:    commands,
