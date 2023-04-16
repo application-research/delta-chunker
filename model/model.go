@@ -14,6 +14,7 @@ type ChunkTask struct {
 }
 
 type Config struct {
+	Label      string      `yaml:"label"`
 	ChunkTasks []ChunkTask `yaml:"chunk-tasks"`
 }
 

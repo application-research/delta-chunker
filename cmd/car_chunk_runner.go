@@ -47,6 +47,9 @@ func CarChunkRunnerCmd() []*cli.Command {
 				fmt.Printf("Delta token: %s\n", task.DeltaToken)
 				fmt.Printf("Delta wallet: %s\n", task.DeltaWallet)
 				fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
+
+				// record each on the database
+				
 			}
 			return nil
 		},
