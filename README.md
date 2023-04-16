@@ -30,9 +30,36 @@ make all
 ```
 
 ## Run chunker advance mode using a yml file.
+### Prepare the configuration file
+```
+chunk-tasks:
+  - name : "chunk-task1"
+    source: "delta"
+    output-dir: "delta"
+    split-size: 1
+    type: "e2e"
+    miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
+    delta-url: "https://node.delta.store"
+    delta-token: "delta"
+    delta-wallet: "delta" // hexed wallet address from boostd / lotus export
+    delta-metadata-request: "{\"auto_retry\":true}"
+  - name: "chunk-task2"
+      source: "delta"
+      output-dir: "delta"
+      split-size: 1
+      type: "e2e"
+      miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
+      delta-url: "http://localhost:1313"
+      delta-token: "delta"
+      delta-wallet: "delta" // hexed wallet address from boostd / lotus export
+      delta-metadata-request: "{\"auto_retry\":true}"
+```
+### Run the chunker
 ```
 ./dc car-chunk-runner --run-config=<run-config-file>
 ```
+
+This will go thru each of the chunk-split tasks and run the delta chunker and make deals with the delta instance.
 
 ## Author
 Protocol Labs Outercore Engineering.
