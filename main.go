@@ -38,6 +38,7 @@ func main() {
 	// cli
 	commands = append(commands, cmd.CarCmd()...)
 	commands = append(commands, cmd.CarChunkRunnerCmd()...)
+	commands = append(commands, cmd.HexCmd()...)
 
 	app := &cli.App{
 		Commands:    commands,
