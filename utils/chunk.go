@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/ipfs/go-blockservice"
 	"github.com/ipfs/go-cid"
 	"github.com/ipfs/go-datastore"
@@ -425,4 +426,14 @@ func (b *FSBuilder) getNodeByLink(ln *format.Link) (fn FsNode, err error) {
 		fn.Link = append(fn.Link, node)
 	}
 	return
+}
+
+// PrettyEncode Encoding the data into JSON format and writing it to the output stream.
+func PrettyEncode(data interface{}, out io.Writer) error {
+	enc := json.NewEncoder(out)
+	enc.SetIndent("", "    ")
+	if err := enc.Encode(data); err != nil {
+		return err
+	}
+	return nil
 }

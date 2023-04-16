@@ -13,4 +13,9 @@ This repo contains the code for the delta-chunker binary. This binary is used to
 make all
 ```
 
+## Run
+```
+```
 
+## Author
+Protocol Labs Outercore Engineering.
