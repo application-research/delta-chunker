@@ -5,8 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="125accbf-fbe9-4220-bdb9-cb861ef27e02" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/jobs/deal_checker.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jobs/job.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/model.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/car_chunk_runner.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/car_chunk_runner.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/sample-run.yml" beforeDir="false" afterPath="$PROJECT_DIR$/example/sample-run.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,15 +55,17 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
     <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/cmd" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/jobs" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/jobs" />
       <recent name="$PROJECT_DIR$/cmd" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/chunk" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/model" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/config" />
       <recent name="$PROJECT_DIR$/utils" />

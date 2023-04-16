@@ -15,11 +15,14 @@ import (
 )
 
 var (
-	log = logging.Logger("api")
+	log = logging.Logger("chunker")
 )
 
 var Commit string
 var Version string
+
+// content
+// content_split table
 
 // It initializes the config, gets all the commands, and runs the app.
 func main() {
