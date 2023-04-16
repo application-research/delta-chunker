@@ -26,6 +26,7 @@ require (
 	github.com/multiformats/go-multiaddr v0.8.0
 	github.com/urfave/cli/v2 v2.23.5
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
