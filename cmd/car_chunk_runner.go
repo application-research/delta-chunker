@@ -12,6 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/urfave/cli/v2"
 	"gopkg.in/yaml.v3"
+	"gorm.io/gorm"
 	"io"
 	"os"
 	"path"
@@ -36,6 +37,13 @@ func CarChunkRunnerCmd() []*cli.Command {
 		},
 		Action: func(c *cli.Context) error {
 			configFile := c.String("run-config")
+			// open the db
+			DB, err := model.OpenDatabase()
+			if err != nil {
+				fmt.Println("Error opening database:", err)
+				return err
+			}
+
 			data, err := os.ReadFile(configFile)
 			if err != nil {
 				fmt.Println("Error reading config file:", err)
@@ -43,12 +51,14 @@ func CarChunkRunnerCmd() []*cli.Command {
 			}
 
 			// parse the YAML data into Config struct
-			var cfg model.Config
+			var cfg model.ChunkRunConfig
 			err = yaml.Unmarshal(data, &cfg)
 			if err != nil {
 				fmt.Println("Error parsing YAML:", err)
 				return err
 			}
+
+			DB.Create(&cfg)
 
 			// access the individual chunk tasks
 			for _, task := range cfg.ChunkTasks {
@@ -66,9 +76,10 @@ func CarChunkRunnerCmd() []*cli.Command {
 					fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
 
 					// record on the database
+					DB.Create(&task)
 
 					// run it
-					carChunkRunner(task)
+					carChunkRunner(task, DB)
 
 					// get all the results
 
@@ -88,7 +99,7 @@ func CarChunkRunnerCmd() []*cli.Command {
 	return carCommands
 }
 
-func carChunkRunner(chunkTask model.ChunkTask) error {
+func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 	ctx := context.Background()
 	if _, err := os.Stat(chunkTask.OutputDir); os.IsNotExist(err) {
 		return err

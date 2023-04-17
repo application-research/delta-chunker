@@ -14,7 +14,7 @@ type ChunkTask struct {
 	DeltaMetadataReq string `yaml:"delta-metadata-request"`
 }
 
-type Config struct {
+type ChunkRunConfig struct {
 	Label      string      `yaml:"label"`
 	ChunkTasks []ChunkTask `yaml:"chunk-tasks"`
 }
