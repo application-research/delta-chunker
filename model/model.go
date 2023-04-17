@@ -4,8 +4,9 @@ type ChunkTask struct {
 	Name             string `yaml:"name"`
 	Source           string `yaml:"source"`
 	OutputDir        string `yaml:"output-dir"`
-	SplitSize        int    `yaml:"split-size"`
-	ConnectionMode   string `yaml:"connection_mode"`
+	SplitSize        string `yaml:"split-size"`
+	IncludeCommp     bool   `yaml:"include-commp"`
+	ConnectionMode   string `yaml:"connection-mode"`
 	Miner            string `yaml:"miner"`
 	DeltaURL         string `yaml:"delta-url"`
 	DeltaToken       string `yaml:"delta-token"`
@@ -26,6 +27,7 @@ type Content struct {
 	Miner                string `json:"miner"`
 	ConnectionMode       string `json:"connection_mode"`
 	Status               string `json:"status"`
+	DeltaContentId       int64  `json:"delta_content_id"`
 	DeltaNodeUrl         string `json:"delta_node_url"`
 	DeltaWallet          string `json:"delta_wallet"`
 	DeltaMetadataRequest string `json:"delta_metadata_request"`
@@ -33,10 +35,19 @@ type Content struct {
 	UpdatedAt            string `json:"updated_at"`
 }
 
+type ContentConfig struct {
+	ID          int64     `json:"id"`
+	ContentID   int64     `json:"content_id"`
+	ChunkTaskID ChunkTask `json:"chunk_task_id"`
+	CreatedAt   string    `json:"created_at"`
+	UpdatedAt   string    `json:"updated_at"`
+}
+
 type ContentSplit struct {
 	ID             int64  `json:"id"`
 	ContentID      int64  `json:"content_id"`
 	ContentCid     string `json:"split_cid"`
+	DeltaContentId int64  `json:"delta_content_id"`
 	Miner          string `json:"miner"`
 	Status         int    `json:"status"`
 	ConnectionMode string `json:"connection_mode"`

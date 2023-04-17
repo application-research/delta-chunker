@@ -88,7 +88,8 @@ func CarCmd() []*cli.Command {
 			outDir := c.String("output-dir")
 			includeCommp := c.Bool("include-commp")
 			minerAssignment := c.String("miner")
-			return carChunkRunner(ctx, sourceInput, splitSizeInput, outDir, includeCommp, minerAssignment)
+
+			return carChunkSingleTaskRunner(ctx, sourceInput, splitSizeInput, outDir, includeCommp, minerAssignment)
 		},
 	}
 	carCommands = append(carCommands, carCmd)
@@ -96,7 +97,18 @@ func CarCmd() []*cli.Command {
 	return carCommands
 }
 
-func carChunkRunner(ctx context.Context, sourceInput string, splitSizeInput string, outDir string, includeCommp bool, minerAssignment string) error {
+// name: "chunk-task1"
+// source: "myfiles_for_client_1"
+// output-dir: "myfiles_for_client_2"
+// split-size: 10000000 #0 means no split
+// connection_mode: "e2e"
+// miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
+// delta-url: "https://node.delta.store"
+// delta-token: "delta"
+// delta-wallet: "delta" # hexed wallet address from boostd / lotus export
+// delta-metadata-request: "{\"auto_retry\":true}" # no need to specify miner here, it will be taken from miner field
+func carChunkSingleTaskRunner(ctx context.Context, sourceInput string,
+	splitSizeInput string, outDir string, includeCommp bool, minerAssignment string) error {
 
 	if _, err := os.Stat(outDir); os.IsNotExist(err) {
 		return err
