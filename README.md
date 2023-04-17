@@ -4,7 +4,7 @@
 
 This repo contains the code for the delta-chunker binary. This binary is used to chunk files into smaller pieces (CAR files) for use with Delta deal making engine.
 
-![image](https://user-images.githubusercontent.com/4479171/232341521-702b0530-5462-46e7-8393-70225369b368.png)
+![image](https://user-images.githubusercontent.com/4479171/232383639-b52b36ce-9d13-4f7c-be80-bcd887e62891.png)
 
 
 ## Features
