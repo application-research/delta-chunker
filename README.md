@@ -22,11 +22,12 @@ This repo contains the code for the delta-chunker binary. This binary is used to
 ## Build 
 ```
 make all
-./dc car --help
+./dc car-chunk-runner --help
 ```
 
 ## Run chunker task
-### Prepare the configuration file
+### Prepare the chunk task file
+This will be the basis of the car-chunk-runner for making storage deals.
 ```
 label: "sample-run"
 chunk-tasks:
