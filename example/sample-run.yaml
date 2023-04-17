@@ -3,7 +3,7 @@ chunk-tasks:
   - name: "chunk-task1"
     source: "myfiles_for_client_1"
     output-dir: "myfiles_for_client_2"
-    split-size: 10000000 #0 means no split
+    split-size: "10000000" #0 means no split
     connection-mode: "e2e"
     include-commp: true
     miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
@@ -14,8 +14,9 @@ chunk-tasks:
   - name: "chunk-task2"
     source: "myfiles_for_client_2"
     output-dir: "myfiles_for_client_2"
-    split-size: 10000000  #0 means no split
+    split-size: "10000000"  #0 means no split
     connection-mode: "e2e"
+    include-commp: true
     miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
     delta-url: "http://localhost:1313"
     delta-token: "delta"

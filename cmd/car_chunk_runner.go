@@ -29,6 +29,10 @@ func CarChunkRunnerCmd() []*cli.Command {
 				Name:  "run-config",
 				Usage: "path to run config file",
 			},
+			&cli.StringFlag{
+				Name:  "output-dir",
+				Usage: "path to output directory",
+			},
 		},
 		Action: func(c *cli.Context) error {
 			configFile := c.String("run-config")
@@ -48,21 +52,32 @@ func CarChunkRunnerCmd() []*cli.Command {
 
 			// access the individual chunk tasks
 			for _, task := range cfg.ChunkTasks {
-				fmt.Printf("Task name: %s\n", task.Name)
-				fmt.Printf("Source: %s\n", task.Source)
-				fmt.Printf("Output directory: %s\n", task.OutputDir)
-				fmt.Printf("Split size: %d\n", task.SplitSize)
-				fmt.Printf("Connection mode: %s\n", task.ConnectionMode)
-				fmt.Printf("Miner: %s\n", task.Miner)
-				fmt.Printf("Delta URL: %s\n", task.DeltaURL)
-				fmt.Printf("Delta token: %s\n", task.DeltaToken)
-				fmt.Printf("Delta wallet: %s\n", task.DeltaWallet)
-				fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
+				go func() { // async!
+					fmt.Println("Task")
+					fmt.Printf("Task name: %s\n", task.Name)
+					fmt.Printf("Source: %s\n", task.Source)
+					fmt.Printf("Output directory: %s\n", task.OutputDir)
+					fmt.Printf("Split size: %d\n", task.SplitSize)
+					fmt.Printf("Connection mode: %s\n", task.ConnectionMode)
+					fmt.Printf("Miner: %s\n", task.Miner)
+					fmt.Printf("Delta URL: %s\n", task.DeltaURL)
+					fmt.Printf("Delta token: %s\n", task.DeltaToken)
+					fmt.Printf("Delta wallet: %s\n", task.DeltaWallet)
+					fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
 
-				// record each on the database
+					// record on the database
 
-				// run it
-				go carChunkRunner(task)
+					// run it
+					carChunkRunner(task)
+
+					// get all the results
+
+					// create the delta metadata request
+
+					// upload to delta
+
+					// write the output to a file
+				}()
 
 			}
 			return nil
