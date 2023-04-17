@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"delta-chunker/config"
 	"delta-chunker/model"
 	"delta-chunker/utils"
 	"fmt"
@@ -20,7 +21,27 @@ import (
 	"strconv"
 )
 
-func CarChunkRunnerCmd() []*cli.Command {
+type CommpResult struct {
+	commp     string
+	pieceSize uint64
+}
+
+type Result struct {
+	SourcePath      string                       `json:"source_path"`
+	PayloadCid      string                       `json:"cid"`
+	PieceCommitment PieceCommitment              `json:"piece_commitment"`
+	Size            uint64                       `json:"size"`
+	Miner           string                       `json:"miner"`
+	CidMap          map[string]utils.CidMapValue `json:"cid_map"`
+}
+
+type PieceCommitment struct {
+	PieceCID          string `json:"piece_cid"`
+	PaddedPieceSize   uint64 `json:"padded_piece_size"`
+	UnpaddedPieceSize uint64 `json:"unpadded_piece_size"`
+}
+
+func CarChunkRunnerCmd(config *config.DeltaChunkerConfig) []*cli.Command {
 	var carCommands []*cli.Command
 	carChunkerCmd := &cli.Command{
 		Name:  "car-chunk-runner",
@@ -38,7 +59,7 @@ func CarChunkRunnerCmd() []*cli.Command {
 		Action: func(c *cli.Context) error {
 			configFile := c.String("run-config")
 			// open the db
-			DB, err := model.OpenDatabase()
+			DB, err := model.OpenDatabase(config.Common.DBDSN)
 			if err != nil {
 				fmt.Println("Error opening database:", err)
 				return err
@@ -58,7 +79,7 @@ func CarChunkRunnerCmd() []*cli.Command {
 				return err
 			}
 
-			DB.Create(&cfg)
+			//			DB.Create(&cfg)
 
 			// access the individual chunk tasks
 			for _, task := range cfg.ChunkTasks {
@@ -162,7 +183,6 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 					End:   written,
 				})
 				outFilename := uuid.New().String() + ".car"
-				//outFilename := cid + ".car"
 				outPath := path.Join(chunkTask.OutputDir, outFilename)
 				carF, err := os.Create(outPath)
 				if err != nil {
@@ -181,6 +201,7 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 				output := Result{
 					PayloadCid: cid,
 					CidMap:     cidMap,
+					SourcePath: sourcePath,
 				}
 
 				if chunkTask.Miner != "" {
@@ -256,6 +277,7 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 				output := Result{
 					PayloadCid: cid,
 					CidMap:     cidMap,
+					SourcePath: sourcePath,
 				}
 
 				if chunkTask.Miner != "" {

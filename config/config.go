@@ -14,7 +14,7 @@ var (
 
 type DeltaChunkerConfig struct {
 	Common struct {
-		DBDSN   string `env:"DB_DSN" envDefault:"delta.db"`
+		DBDSN   string `env:"DB_DSN" envDefault:"dcdb.db"`
 		Commit  string `env:"COMMIT"`
 		Version string `env:"VERSION"`
 	}

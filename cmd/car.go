@@ -19,25 +19,6 @@ import (
 	"strconv"
 )
 
-type CommpResult struct {
-	commp     string
-	pieceSize uint64
-}
-
-type Result struct {
-	PayloadCid      string                       `json:"cid"`
-	PieceCommitment PieceCommitment              `json:"piece_commitment"`
-	Size            uint64                       `json:"size"`
-	Miner           string                       `json:"miner"`
-	CidMap          map[string]utils.CidMapValue `json:"cid_map"`
-}
-
-type PieceCommitment struct {
-	PieceCID          string `json:"piece_cid"`
-	PaddedPieceSize   uint64 `json:"padded_piece_size"`
-	UnpaddedPieceSize uint64 `json:"unpadded_piece_size"`
-}
-
 type Input []utils.Finfo
 
 type CarHeader struct {

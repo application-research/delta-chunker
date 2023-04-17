@@ -29,6 +29,7 @@ func main() {
 
 	// get the config
 	cfg := config.InitConfig()
+
 	cfg.Common.Commit = Commit
 	cfg.Common.Version = Version
 
@@ -37,7 +38,7 @@ func main() {
 
 	// cli
 	commands = append(commands, cmd.CarCmd()...)
-	commands = append(commands, cmd.CarChunkRunnerCmd()...)
+	commands = append(commands, cmd.CarChunkRunnerCmd(&cfg)...)
 	commands = append(commands, cmd.HexCmd()...)
 
 	app := &cli.App{
