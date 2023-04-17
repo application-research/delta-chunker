@@ -25,19 +25,7 @@ make all
 ./dc car --help
 ```
 
-## Run chunker basic mode
-```
-./dc car --source=<source-dir> \ 
---outpit-dir=<dest-dir> \ 
---split-size=<size-in-bytes>
---type=<e2e|import> \  
---miner=<miner-address> \
---delta-url=<delta-url> \ 
---delta-api-key=<delta-token> \ 
---delta-wallet=<delta-wallet> 
-```
-
-## Run chunker advance mode using a yml file.
+## Run chunker task
 ### Prepare the configuration file
 ```
 label: "sample-run"
@@ -47,6 +35,7 @@ chunk-tasks:
     output-dir: "myfiles_for_client_2"
     split-size: 10000000
     connection_mode: "e2e"
+    include-commp: true
     miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
     delta-url: "https://node.delta.store"
     delta-token: "delta"
@@ -57,6 +46,7 @@ chunk-tasks:
     output-dir: "myfiles_for_client_2"
     split-size: 10000000
     connection_mode: "e2e"
+    include-commp: true
     miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
     delta-url: "http://localhost:1313"
     delta-token: "delta"
