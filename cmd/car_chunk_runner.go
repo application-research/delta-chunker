@@ -44,6 +44,100 @@ type PieceCommitment struct {
 	UnpaddedPieceSize uint64 `json:"unpadded_piece_size"`
 }
 
+type WalletRequest struct {
+	Id         uint64 `json:"id,omitempty"`
+	Address    string `json:"address,omitempty"`
+	Uuid       string `json:"uuid,omitempty"`
+	KeyType    string `json:"key_type,omitempty"`
+	PrivateKey string `json:"private_key,omitempty"`
+}
+
+type PieceCommitmentRequest struct {
+	Piece             string `json:"piece_cid,omitempty"`
+	PaddedPieceSize   uint64 `json:"padded_piece_size,omitempty"`
+	UnPaddedPieceSize uint64 `json:"unpadded_piece_size,omitempty"`
+}
+
+type DealRequest struct {
+	Cid                    string                 `json:"cid,omitempty"`
+	Source                 string                 `json:"source,omitempty"`
+	Miner                  string                 `json:"miner,omitempty"`
+	Duration               int64                  `json:"duration,omitempty"`
+	DurationInDays         int64                  `json:"duration_in_days,omitempty"`
+	Wallet                 WalletRequest          `json:"wallet,omitempty"`
+	PieceCommitment        PieceCommitmentRequest `json:"piece_commitment,omitempty"`
+	ConnectionMode         string                 `json:"connection_mode,omitempty"`
+	Size                   int64                  `json:"size,omitempty"`
+	StartEpoch             int64                  `json:"start_epoch,omitempty"`
+	StartEpochInDays       int64                  `json:"start_epoch_in_days,omitempty"`
+	Replication            int                    `json:"replication,omitempty"`
+	RemoveUnsealedCopy     bool                   `json:"remove_unsealed_copy"`
+	SkipIPNIAnnounce       bool                   `json:"skip_ipni_announce"`
+	AutoRetry              bool                   `json:"auto_retry"`
+	Label                  string                 `json:"label,omitempty"`
+	DealVerifyState        string                 `json:"deal_verify_state,omitempty"`
+	UnverifiedDealMaxPrice string                 `json:"unverified_deal_max_price,omitempty"`
+}
+
+type DealE2EUploadResponse struct {
+	Status          string `json:"status"`
+	Message         string `json:"message"`
+	ContentID       int    `json:"content_id"`
+	DealRequestMeta struct {
+		Cid    string `json:"cid"`
+		Miner  string `json:"miner"`
+		Wallet struct {
+		} `json:"wallet"`
+		PieceCommitment struct {
+		} `json:"piece_commitment"`
+		ConnectionMode     string `json:"connection_mode"`
+		Replication        int    `json:"replication"`
+		RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+		SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+		AutoRetry          bool   `json:"auto_retry"`
+	} `json:"deal_request_meta"`
+	DealProposalParameterRequestMeta struct {
+		ID                 int    `json:"ID"`
+		Content            int    `json:"content"`
+		Label              string `json:"label"`
+		Duration           int    `json:"duration"`
+		RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+		SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+		VerifiedDeal       bool   `json:"verified_deal"`
+		CreatedAt          string `json:"created_at"`
+		UpdatedAt          string `json:"updated_at"`
+	} `json:"deal_proposal_parameter_request_meta"`
+	ReplicatedContents []struct {
+		Status          string `json:"status"`
+		Message         string `json:"message"`
+		ContentID       int    `json:"content_id"`
+		DealRequestMeta struct {
+			Cid    string `json:"cid"`
+			Miner  string `json:"miner"`
+			Wallet struct {
+			} `json:"wallet"`
+			PieceCommitment struct {
+			} `json:"piece_commitment"`
+			ConnectionMode     string `json:"connection_mode"`
+			Replication        int    `json:"replication"`
+			RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+			SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+			AutoRetry          bool   `json:"auto_retry"`
+		} `json:"deal_request_meta"`
+		DealProposalParameterRequestMeta struct {
+			ID                 int    `json:"ID"`
+			Content            int    `json:"content"`
+			Label              string `json:"label"`
+			Duration           int    `json:"duration"`
+			RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+			SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+			VerifiedDeal       bool   `json:"verified_deal"`
+			CreatedAt          string `json:"created_at"`
+			UpdatedAt          string `json:"updated_at"`
+		} `json:"deal_proposal_parameter_request_meta"`
+	} `json:"replicated_contents"`
+}
+
 func CarChunkRunnerCmd(config *config.DeltaChunkerConfig) []*cli.Command {
 	var carCommands []*cli.Command
 	carChunkerCmd := &cli.Command{
@@ -409,100 +503,6 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 	return nil
 }
 
-type WalletRequest struct {
-	Id         uint64 `json:"id,omitempty"`
-	Address    string `json:"address,omitempty"`
-	Uuid       string `json:"uuid,omitempty"`
-	KeyType    string `json:"key_type,omitempty"`
-	PrivateKey string `json:"private_key,omitempty"`
-}
-
-type PieceCommitmentRequest struct {
-	Piece             string `json:"piece_cid,omitempty"`
-	PaddedPieceSize   uint64 `json:"padded_piece_size,omitempty"`
-	UnPaddedPieceSize uint64 `json:"unpadded_piece_size,omitempty"`
-}
-
-type DealRequest struct {
-	Cid                    string                 `json:"cid,omitempty"`
-	Source                 string                 `json:"source,omitempty"`
-	Miner                  string                 `json:"miner,omitempty"`
-	Duration               int64                  `json:"duration,omitempty"`
-	DurationInDays         int64                  `json:"duration_in_days,omitempty"`
-	Wallet                 WalletRequest          `json:"wallet,omitempty"`
-	PieceCommitment        PieceCommitmentRequest `json:"piece_commitment,omitempty"`
-	ConnectionMode         string                 `json:"connection_mode,omitempty"`
-	Size                   int64                  `json:"size,omitempty"`
-	StartEpoch             int64                  `json:"start_epoch,omitempty"`
-	StartEpochInDays       int64                  `json:"start_epoch_in_days,omitempty"`
-	Replication            int                    `json:"replication,omitempty"`
-	RemoveUnsealedCopy     bool                   `json:"remove_unsealed_copy"`
-	SkipIPNIAnnounce       bool                   `json:"skip_ipni_announce"`
-	AutoRetry              bool                   `json:"auto_retry"`
-	Label                  string                 `json:"label,omitempty"`
-	DealVerifyState        string                 `json:"deal_verify_state,omitempty"`
-	UnverifiedDealMaxPrice string                 `json:"unverified_deal_max_price,omitempty"`
-}
-
-type DealE2EUploadResponse struct {
-	Status          string `json:"status"`
-	Message         string `json:"message"`
-	ContentID       int    `json:"content_id"`
-	DealRequestMeta struct {
-		Cid    string `json:"cid"`
-		Miner  string `json:"miner"`
-		Wallet struct {
-		} `json:"wallet"`
-		PieceCommitment struct {
-		} `json:"piece_commitment"`
-		ConnectionMode     string `json:"connection_mode"`
-		Replication        int    `json:"replication"`
-		RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
-		SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
-		AutoRetry          bool   `json:"auto_retry"`
-	} `json:"deal_request_meta"`
-	DealProposalParameterRequestMeta struct {
-		ID                 int    `json:"ID"`
-		Content            int    `json:"content"`
-		Label              string `json:"label"`
-		Duration           int    `json:"duration"`
-		RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
-		SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
-		VerifiedDeal       bool   `json:"verified_deal"`
-		CreatedAt          string `json:"created_at"`
-		UpdatedAt          string `json:"updated_at"`
-	} `json:"deal_proposal_parameter_request_meta"`
-	ReplicatedContents []struct {
-		Status          string `json:"status"`
-		Message         string `json:"message"`
-		ContentID       int    `json:"content_id"`
-		DealRequestMeta struct {
-			Cid    string `json:"cid"`
-			Miner  string `json:"miner"`
-			Wallet struct {
-			} `json:"wallet"`
-			PieceCommitment struct {
-			} `json:"piece_commitment"`
-			ConnectionMode     string `json:"connection_mode"`
-			Replication        int    `json:"replication"`
-			RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
-			SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
-			AutoRetry          bool   `json:"auto_retry"`
-		} `json:"deal_request_meta"`
-		DealProposalParameterRequestMeta struct {
-			ID                 int    `json:"ID"`
-			Content            int    `json:"content"`
-			Label              string `json:"label"`
-			Duration           int    `json:"duration"`
-			RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
-			SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
-			VerifiedDeal       bool   `json:"verified_deal"`
-			CreatedAt          string `json:"created_at"`
-			UpdatedAt          string `json:"updated_at"`
-		} `json:"deal_proposal_parameter_request_meta"`
-	} `json:"replicated_contents"`
-}
-
 func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error {
 	if chunkTask.DeltaApiKey != "" && chunkTask.DeltaURL != "" {
 		dealRequest := DealRequest{
@@ -526,12 +526,6 @@ func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error 
 
 			}
 			dealRequest.Size = int64(output.Size)
-
-			// http request
-			//curl --location 'http://localhost:1414/api/v1/deal/end-to-end' \
-			//--header 'Authorization: Bearer EST18096aa7-e0cc-4a2e-8a03-e595fe534b14ARY' \
-			//--form 'data=@"/Users/alvinreyes/Downloads/pycharm-professional-2022.3.2-aarch64.dmg"' \
-			//--form 'metadata="{\"miner\":\"f01907556\",\"auto_retry\":false}"'
 
 			// create a new file upload http request with optional extra params
 			payload := &bytes.Buffer{}
@@ -591,8 +585,36 @@ func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error 
 			}
 
 		}
-		if chunkTask.ConnectionMode == "import" {
 
+		if chunkTask.ConnectionMode == "import" {
+			var buffer bytes.Buffer
+			var dealRequestArr []DealRequest
+			dealRequestArr = append(dealRequestArr, dealRequest)
+			req, err := http.NewRequest("POST", chunkTask.DeltaURL+"/api/v1/deal/imports", &buffer)
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("Authorization", "Bearer "+chunkTask.DeltaApiKey)
+			client := &http.Client{}
+			var res *http.Response
+			res, err = client.Do(req)
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+
+			fmt.Println(res.StatusCode)
+			if res.StatusCode == 200 {
+				var dealE2EUploadResponse DealE2EUploadResponse
+				body, err := io.ReadAll(res.Body)
+				if err != nil {
+					fmt.Println(err)
+				}
+				err = json.Unmarshal(body, &dealE2EUploadResponse)
+				fmt.Println(dealE2EUploadResponse)
+			}
 		}
 
 	}

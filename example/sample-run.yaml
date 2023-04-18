@@ -3,11 +3,11 @@ chunk-tasks:
   - name: "chunk-task1"
     source: "./example/source"
     output-dir: "./example/output_dir"
-    split-size: "100000000"
-    connection-mode: "e2e"
+    split-size: "0"
+    connection-mode: "import"
     include-commp: true
     auto-retry: true
-    miner: "f0137168"
-    delta-url: "https://delta.estuary.tech"
-    delta-api-key: "[APIKEY]"
-    delta-wallet: "f1z5ykhx7qi2jeukwlve3mu2zbcuzrtewhc3iajmi" # hexed wallet address from boostd / lotus export
+    miner: "f01963614"
+    delta-url: "http://localhost:1414"
+    delta-api-key: "[API_KEY]"
+    delta-wallet: "f1z5ykhx7qi2jeukwlve3mu2zbcuzrtewhc3iajmi"
