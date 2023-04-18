@@ -8,6 +8,6 @@ chunk-tasks:
     include-commp: true
     miner: "f0137168"
     delta-url: "https://delta.estuary.tech"
-    delta-api-key: "EST18096aa7-e0cc-4a2e-8a03-e595fe534b14ARY"
+    delta-api-key: "[your api key]"
     delta-wallet: "f1z5ykhx7qi2jeukwlve3mu2zbcuzrtewhc3iajmi" # hexed wallet address from boostd / lotus export
     delta-metadata-request: "{\"auto_retry\":true}" # no need to specify miner here, it will be taken from miner field
