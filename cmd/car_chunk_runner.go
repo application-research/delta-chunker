@@ -551,7 +551,7 @@ func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error 
 				return nil
 			}
 
-			partMetadata := fmt.Sprintf(`{"auto_retry":true}`)
+			partMetadata := fmt.Sprintf(`{"auto_retry":true,"miner":"%s"}`, dealRequest.Miner)
 
 			if _, err = partFile.Write([]byte(partMetadata)); err != nil {
 				fmt.Println("Write error: ", err)

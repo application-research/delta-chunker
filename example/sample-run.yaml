@@ -9,5 +9,5 @@ chunk-tasks:
     auto-retry: true
     miner: "f0137168"
     delta-url: "https://delta.estuary.tech"
-    delta-api-key: "[API KEY]"
+    delta-api-key: "[APIKEY]"
     delta-wallet: "f1z5ykhx7qi2jeukwlve3mu2zbcuzrtewhc3iajmi" # hexed wallet address from boostd / lotus export
