@@ -1,17 +1,17 @@
 package model
 
 type ChunkTask struct {
-	Name             string `yaml:"name"`
-	Source           string `yaml:"source"`
-	OutputDir        string `yaml:"output-dir"`
-	SplitSize        string `yaml:"split-size"`
-	IncludeCommp     bool   `yaml:"include-commp"`
-	ConnectionMode   string `yaml:"connection-mode"`
-	Miner            string `yaml:"miner"`
-	DeltaURL         string `yaml:"delta-url"`
-	DeltaApiKey      string `yaml:"delta-api-key"`
-	DeltaWallet      string `yaml:"delta-wallet"`
-	DeltaMetadataReq string `yaml:"delta-metadata-request"`
+	Name           string `yaml:"name"`
+	Source         string `yaml:"source"`
+	OutputDir      string `yaml:"output-dir"`
+	SplitSize      string `yaml:"split-size"`
+	IncludeCommp   bool   `yaml:"include-commp"`
+	ConnectionMode string `yaml:"connection-mode"`
+	AutoRetry      bool   `yaml:"auto-retry"`
+	Miner          string `yaml:"miner"`
+	DeltaURL       string `yaml:"delta-url"`
+	DeltaApiKey    string `yaml:"delta-api-key"`
+	DeltaWallet    string `yaml:"delta-wallet"`
 }
 
 type ChunkRunConfig struct {

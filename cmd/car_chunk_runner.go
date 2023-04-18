@@ -7,6 +7,7 @@ import (
 	"delta-chunker/config"
 	"delta-chunker/model"
 	"delta-chunker/utils"
+	"encoding/json"
 	"fmt"
 	commcid "github.com/filecoin-project/go-fil-commcid"
 	commp "github.com/filecoin-project/go-fil-commp-hashhash"
@@ -15,6 +16,8 @@ import (
 	"gopkg.in/yaml.v3"
 	"gorm.io/gorm"
 	"io"
+	"mime/multipart"
+	"net/http"
 	"os"
 	"path"
 	"path/filepath"
@@ -93,7 +96,6 @@ func CarChunkRunnerCmd(config *config.DeltaChunkerConfig) []*cli.Command {
 				fmt.Printf("Delta URL: %s\n", task.DeltaURL)
 				fmt.Printf("Delta token: %s\n", task.DeltaApiKey)
 				fmt.Printf("Delta wallet: %s\n", task.DeltaWallet)
-				fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
 				//go func() { // async!
 				fmt.Println("Running task:", task.Name)
 				// record on the database
@@ -131,7 +133,6 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 		chunkTask.SplitSize = "0"
 	}
 
-	fmt.Println("Split size: ", chunkTask.SplitSize)
 	if chunkTask.SplitSize != "0" {
 		splitSizeA, err := strconv.Atoi(chunkTask.SplitSize)
 		if err != nil {
@@ -248,6 +249,9 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 		if err != nil {
 			panic(err)
 		}
+		for _, output := range outputs {
+			err = processOutput(chunkTask, output, DB)
+		}
 	} else {
 		stat, err := os.Stat(chunkTask.Source)
 		if err != nil {
@@ -328,10 +332,11 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 				fmt.Println(err)
 			}
 			fmt.Println(buffer.String())
-			return nil
-			if err != nil {
-				return err
+			for _, output := range outputs {
+				err = processOutput(chunkTask, output, DB)
 			}
+			return nil
+
 		} else {
 			input = append(input, utils.Finfo{
 				Path:  chunkTask.Source,
@@ -394,13 +399,202 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 				fmt.Println(err)
 			}
 			fmt.Println(buffer.String())
+			for _, output := range outputs {
+				err = processOutput(chunkTask, output, DB)
+			}
 		}
+
 		return nil
 	}
 	return nil
 }
 
-func processOutput(deltaApiKey string, deltaEndpoint string, output Result, db *gorm.DB) error {
+type WalletRequest struct {
+	Id         uint64 `json:"id,omitempty"`
+	Address    string `json:"address,omitempty"`
+	Uuid       string `json:"uuid,omitempty"`
+	KeyType    string `json:"key_type,omitempty"`
+	PrivateKey string `json:"private_key,omitempty"`
+}
 
+type PieceCommitmentRequest struct {
+	Piece             string `json:"piece_cid,omitempty"`
+	PaddedPieceSize   uint64 `json:"padded_piece_size,omitempty"`
+	UnPaddedPieceSize uint64 `json:"unpadded_piece_size,omitempty"`
+}
+
+type DealRequest struct {
+	Cid                    string                 `json:"cid,omitempty"`
+	Source                 string                 `json:"source,omitempty"`
+	Miner                  string                 `json:"miner,omitempty"`
+	Duration               int64                  `json:"duration,omitempty"`
+	DurationInDays         int64                  `json:"duration_in_days,omitempty"`
+	Wallet                 WalletRequest          `json:"wallet,omitempty"`
+	PieceCommitment        PieceCommitmentRequest `json:"piece_commitment,omitempty"`
+	ConnectionMode         string                 `json:"connection_mode,omitempty"`
+	Size                   int64                  `json:"size,omitempty"`
+	StartEpoch             int64                  `json:"start_epoch,omitempty"`
+	StartEpochInDays       int64                  `json:"start_epoch_in_days,omitempty"`
+	Replication            int                    `json:"replication,omitempty"`
+	RemoveUnsealedCopy     bool                   `json:"remove_unsealed_copy"`
+	SkipIPNIAnnounce       bool                   `json:"skip_ipni_announce"`
+	AutoRetry              bool                   `json:"auto_retry"`
+	Label                  string                 `json:"label,omitempty"`
+	DealVerifyState        string                 `json:"deal_verify_state,omitempty"`
+	UnverifiedDealMaxPrice string                 `json:"unverified_deal_max_price,omitempty"`
+}
+
+type DealE2EUploadResponse struct {
+	Status          string `json:"status"`
+	Message         string `json:"message"`
+	ContentID       int    `json:"content_id"`
+	DealRequestMeta struct {
+		Cid    string `json:"cid"`
+		Miner  string `json:"miner"`
+		Wallet struct {
+		} `json:"wallet"`
+		PieceCommitment struct {
+		} `json:"piece_commitment"`
+		ConnectionMode     string `json:"connection_mode"`
+		Replication        int    `json:"replication"`
+		RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+		SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+		AutoRetry          bool   `json:"auto_retry"`
+	} `json:"deal_request_meta"`
+	DealProposalParameterRequestMeta struct {
+		ID                 int    `json:"ID"`
+		Content            int    `json:"content"`
+		Label              string `json:"label"`
+		Duration           int    `json:"duration"`
+		RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+		SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+		VerifiedDeal       bool   `json:"verified_deal"`
+		CreatedAt          string `json:"created_at"`
+		UpdatedAt          string `json:"updated_at"`
+	} `json:"deal_proposal_parameter_request_meta"`
+	ReplicatedContents []struct {
+		Status          string `json:"status"`
+		Message         string `json:"message"`
+		ContentID       int    `json:"content_id"`
+		DealRequestMeta struct {
+			Cid    string `json:"cid"`
+			Miner  string `json:"miner"`
+			Wallet struct {
+			} `json:"wallet"`
+			PieceCommitment struct {
+			} `json:"piece_commitment"`
+			ConnectionMode     string `json:"connection_mode"`
+			Replication        int    `json:"replication"`
+			RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+			SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+			AutoRetry          bool   `json:"auto_retry"`
+		} `json:"deal_request_meta"`
+		DealProposalParameterRequestMeta struct {
+			ID                 int    `json:"ID"`
+			Content            int    `json:"content"`
+			Label              string `json:"label"`
+			Duration           int    `json:"duration"`
+			RemoveUnsealedCopy bool   `json:"remove_unsealed_copy"`
+			SkipIpniAnnounce   bool   `json:"skip_ipni_announce"`
+			VerifiedDeal       bool   `json:"verified_deal"`
+			CreatedAt          string `json:"created_at"`
+			UpdatedAt          string `json:"updated_at"`
+		} `json:"deal_proposal_parameter_request_meta"`
+	} `json:"replicated_contents"`
+}
+
+func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error {
+	if chunkTask.DeltaApiKey != "" && chunkTask.DeltaURL != "" {
+		dealRequest := DealRequest{
+			Cid:                output.PayloadCid,
+			Miner:              output.Miner,
+			Wallet:             WalletRequest{Address: chunkTask.DeltaWallet},
+			PieceCommitment:    PieceCommitmentRequest{Piece: output.PieceCommitment.PieceCID, PaddedPieceSize: output.PieceCommitment.PaddedPieceSize},
+			ConnectionMode:     chunkTask.ConnectionMode,
+			RemoveUnsealedCopy: true,
+			SkipIPNIAnnounce:   false,
+			AutoRetry:          chunkTask.AutoRetry,
+			DealVerifyState:    "verified",
+		}
+
+		if chunkTask.ConnectionMode == "e2e" {
+			// load the source and make  http request to delta
+			file := chunkTask.OutputDir + "/" + output.PieceCommitment.PieceCID + ".car"
+			// open the file
+			f, err := os.Open(file)
+			if err != nil {
+
+			}
+			dealRequest.Size = int64(output.Size)
+
+			// http request
+			//curl --location 'http://localhost:1414/api/v1/deal/end-to-end' \
+			//--header 'Authorization: Bearer EST18096aa7-e0cc-4a2e-8a03-e595fe534b14ARY' \
+			//--form 'data=@"/Users/alvinreyes/Downloads/pycharm-professional-2022.3.2-aarch64.dmg"' \
+			//--form 'metadata="{\"miner\":\"f01907556\",\"auto_retry\":false}"'
+
+			// create a new file upload http request with optional extra params
+			payload := &bytes.Buffer{}
+			writer := multipart.NewWriter(payload)
+			partFile, err := writer.CreateFormFile("data", output.PieceCommitment.PieceCID+".car")
+			if err != nil {
+				fmt.Println("CreateFormFile error: ", err)
+				return nil
+			}
+			_, err = io.Copy(partFile, f)
+			if err != nil {
+				fmt.Println("Copy error: ", err)
+				return nil
+			}
+			if partFile, err = writer.CreateFormField("metadata"); err != nil {
+				fmt.Println("CreateFormField error: ", err)
+				return nil
+			}
+
+			partMetadata := fmt.Sprintf(`{"auto_retry":true}`)
+
+			if _, err = partFile.Write([]byte(partMetadata)); err != nil {
+				fmt.Println("Write error: ", err)
+				return nil
+			}
+			if err = writer.Close(); err != nil {
+				fmt.Println("Close error: ", err)
+				return nil
+			}
+
+			req, err := http.NewRequest("POST",
+				chunkTask.DeltaURL+"/api/v1/deal/end-to-end",
+				payload)
+
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+
+			req.Header.Set("Content-Type", writer.FormDataContentType())
+			req.Header.Set("Authorization", "Bearer "+chunkTask.DeltaApiKey)
+			client := &http.Client{}
+			var res *http.Response
+			res, err = client.Do(req)
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+			if res.StatusCode == 200 {
+				var dealE2EUploadResponse DealE2EUploadResponse
+				body, err := io.ReadAll(res.Body)
+				if err != nil {
+					fmt.Println(err)
+				}
+				err = json.Unmarshal(body, &dealE2EUploadResponse)
+				fmt.Println(dealE2EUploadResponse)
+			}
+
+		}
+		if chunkTask.ConnectionMode == "import" {
+
+		}
+
+	}
 	return nil
 }
