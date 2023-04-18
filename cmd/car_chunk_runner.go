@@ -83,33 +83,33 @@ func CarChunkRunnerCmd(config *config.DeltaChunkerConfig) []*cli.Command {
 
 			// access the individual chunk tasks
 			for _, task := range cfg.ChunkTasks {
-				go func() { // async!
-					fmt.Println("Task")
-					fmt.Printf("Task name: %s\n", task.Name)
-					fmt.Printf("Source: %s\n", task.Source)
-					fmt.Printf("Output directory: %s\n", task.OutputDir)
-					fmt.Printf("Split size: %d\n", task.SplitSize)
-					fmt.Printf("Connection mode: %s\n", task.ConnectionMode)
-					fmt.Printf("Miner: %s\n", task.Miner)
-					fmt.Printf("Delta URL: %s\n", task.DeltaURL)
-					fmt.Printf("Delta token: %s\n", task.DeltaToken)
-					fmt.Printf("Delta wallet: %s\n", task.DeltaWallet)
-					fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
+				fmt.Println("Task")
+				fmt.Printf("Task name: %s\n", task.Name)
+				fmt.Printf("Source: %s\n", task.Source)
+				fmt.Printf("Output directory: %s\n", task.OutputDir)
+				fmt.Printf("Split size: %d\n", task.SplitSize)
+				fmt.Printf("Connection mode: %s\n", task.ConnectionMode)
+				fmt.Printf("Miner: %s\n", task.Miner)
+				fmt.Printf("Delta URL: %s\n", task.DeltaURL)
+				fmt.Printf("Delta token: %s\n", task.DeltaApiKey)
+				fmt.Printf("Delta wallet: %s\n", task.DeltaWallet)
+				fmt.Printf("Delta metadata request: %s\n", task.DeltaMetadataReq)
+				//go func() { // async!
+				fmt.Println("Running task:", task.Name)
+				// record on the database
+				DB.Create(&task)
 
-					// record on the database
-					DB.Create(&task)
+				// run it
+				carChunkRunner(task, DB)
 
-					// run it
-					carChunkRunner(task, DB)
+				// get all the results
 
-					// get all the results
+				// create the delta metadata request
 
-					// create the delta metadata request
+				// upload to delta
 
-					// upload to delta
-
-					// write the output to a file
-				}()
+				// write the output to a file
+				//}()
 
 			}
 			return nil
@@ -127,7 +127,12 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 	}
 	var input Input
 	var outputs []Result
-	if chunkTask.SplitSize != "" {
+	if chunkTask.SplitSize == "" {
+		chunkTask.SplitSize = "0"
+	}
+
+	fmt.Println("Split size: ", chunkTask.SplitSize)
+	if chunkTask.SplitSize != "0" {
 		splitSizeA, err := strconv.Atoi(chunkTask.SplitSize)
 		if err != nil {
 			return err
@@ -224,6 +229,11 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 					output.PieceCommitment.PieceCID = commCid.String()
 					output.PieceCommitment.PaddedPieceSize = pieceSize
 					output.Size = uint64(written)
+
+					err = os.RemoveAll(outPath)
+					if err != nil {
+						return err
+					}
 				}
 				outputs = append(outputs, output)
 			}
@@ -300,7 +310,14 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 					output.PieceCommitment.PieceCID = commCid.String()
 					output.PieceCommitment.PaddedPieceSize = pieceSize
 					output.Size = uint64(info.Size())
+
+					// remove the output path
+					err = os.RemoveAll(outPath)
+					if err != nil {
+						return err
+					}
 				}
+
 				outputs = append(outputs, output)
 				return nil
 			})
@@ -363,6 +380,10 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 				output.PieceCommitment.PieceCID = commCid.String()
 				output.PieceCommitment.PaddedPieceSize = pieceSize
 				output.Size = uint64(stat.Size())
+				err = os.RemoveAll(outPath)
+				if err != nil {
+					return err
+				}
 			}
 			if err != nil {
 				return err
@@ -376,5 +397,10 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 		}
 		return nil
 	}
+	return nil
+}
+
+func processOutput(deltaApiKey string, deltaEndpoint string, output Result, db *gorm.DB) error {
+
 	return nil
 }

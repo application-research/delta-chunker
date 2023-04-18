@@ -37,9 +37,7 @@ func main() {
 	var commands []*cli.Command
 
 	// cli
-	commands = append(commands, cmd.CarCmd()...)
 	commands = append(commands, cmd.CarChunkRunnerCmd(&cfg)...)
-	commands = append(commands, cmd.HexCmd()...)
 
 	app := &cli.App{
 		Commands:    commands,

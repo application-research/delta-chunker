@@ -9,7 +9,7 @@ type ChunkTask struct {
 	ConnectionMode   string `yaml:"connection-mode"`
 	Miner            string `yaml:"miner"`
 	DeltaURL         string `yaml:"delta-url"`
-	DeltaToken       string `yaml:"delta-token"`
+	DeltaApiKey      string `yaml:"delta-api-key"`
 	DeltaWallet      string `yaml:"delta-wallet"`
 	DeltaMetadataReq string `yaml:"delta-metadata-request"`
 }

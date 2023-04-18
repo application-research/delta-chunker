@@ -1,24 +1,13 @@
 label: "sample-run"
 chunk-tasks:
   - name: "chunk-task1"
-    source: "myfiles_for_client_1"
-    output-dir: "myfiles_for_client_2"
-    split-size: "10000000" #0 means no split
+    source: "./example/source"
+    output-dir: "./example/output_dir"
+    split-size: "0"
     connection-mode: "e2e"
     include-commp: true
-    miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
-    delta-url: "https://node.delta.store"
-    delta-token: "delta"
-    delta-wallet: "delta" # hexed wallet address from boostd / lotus export
-    delta-metadata-request: "{\"auto_retry\":true}" # no need to specify miner here, it will be taken from miner field
-  - name: "chunk-task2"
-    source: "myfiles_for_client_2"
-    output-dir: "myfiles_for_client_2"
-    split-size: "10000000"  #0 means no split
-    connection-mode: "e2e"
-    include-commp: true
-    miner: "f1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l0"
-    delta-url: "http://localhost:1313"
-    delta-token: "delta"
-    delta-wallet: "delta" # hexed wallet address from boostd / lotus export
+    miner: "f0137168"
+    delta-url: "https://delta.estuary.tech"
+    delta-api-key: "EST18096aa7-e0cc-4a2e-8a03-e595fe534b14ARY"
+    delta-wallet: "f1z5ykhx7qi2jeukwlve3mu2zbcuzrtewhc3iajmi" # hexed wallet address from boostd / lotus export
     delta-metadata-request: "{\"auto_retry\":true}" # no need to specify miner here, it will be taken from miner field
