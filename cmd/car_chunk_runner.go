@@ -325,10 +325,10 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 					output.PieceCommitment.PaddedPieceSize = pieceSize
 					output.Size = uint64(written)
 
-					err = os.RemoveAll(outPath)
-					if err != nil {
-						return err
-					}
+					//err = os.RemoveAll(outPath)
+					//if err != nil {
+					//	return err
+					//}
 				}
 				outputs = append(outputs, output)
 			}
@@ -410,10 +410,10 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 					output.Size = uint64(info.Size())
 
 					// remove the output path
-					err = os.RemoveAll(outPath)
-					if err != nil {
-						return err
-					}
+					//err = os.RemoveAll(outPath)
+					//if err != nil {
+					//	return err
+					//}
 				}
 
 				outputs = append(outputs, output)
@@ -479,10 +479,10 @@ func carChunkRunner(chunkTask model.ChunkTask, DB *gorm.DB) error {
 				output.PieceCommitment.PieceCID = commCid.String()
 				output.PieceCommitment.PaddedPieceSize = pieceSize
 				output.Size = uint64(stat.Size())
-				err = os.RemoveAll(outPath)
-				if err != nil {
-					return err
-				}
+				//err = os.RemoveAll(outPath)
+				//if err != nil {
+				//	return err
+				//}
 			}
 			if err != nil {
 				return err
@@ -587,10 +587,10 @@ func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error 
 		}
 
 		if chunkTask.ConnectionMode == "import" {
-			var buffer bytes.Buffer
+			var buffer = &bytes.Buffer{}
 			var dealRequestArr []DealRequest
 			dealRequestArr = append(dealRequestArr, dealRequest)
-			req, err := http.NewRequest("POST", chunkTask.DeltaURL+"/api/v1/deal/imports", &buffer)
+			req, err := http.NewRequest("POST", chunkTask.DeltaURL+"/api/v1/deal/imports", buffer)
 			if err != nil {
 				fmt.Println(err)
 				return nil
@@ -606,6 +606,7 @@ func processOutput(chunkTask model.ChunkTask, output Result, db *gorm.DB) error 
 			}
 
 			fmt.Println(res.StatusCode)
+			fmt.Println(res.Body)
 			if res.StatusCode == 200 {
 				var dealE2EUploadResponse DealE2EUploadResponse
 				body, err := io.ReadAll(res.Body)
