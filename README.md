@@ -1,6 +1,6 @@
 # Δ Delta Chunker
 
-**Delta chunker is currently under heavy development**
+*Delta chunker is currently under heavy development*
 
 This repo contains the code for the delta-chunker binary. This binary is used to chunk files into smaller pieces (CAR files) for use with Delta deal making engine.
 
