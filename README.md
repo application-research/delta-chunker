@@ -18,6 +18,7 @@ This repo contains the code for the delta-chunker binary. This binary is used to
 - Supports `type` to specify the type of deal to make
 - For `e2e` type, it'll prepare the car and send the file over to the delta instance.
 - For `import` type, it'll prepare the deal. You'll need to manually send the car file to the miner. *This is something we will automate soon with delta importer*
+- API endpoint to allow external clients to trigger the chunker to run with a give large blob [WIP]
 
 ## Build 
 ```
