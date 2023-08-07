@@ -1,3 +1,5 @@
+**Note: This repository is no longer maintained. For our new tool in generating cars, go to [delta-car-gen](https://github.com/alvin-reyes/delta-car-gen])**
+
 # Δ Delta Chunker
 
 [![CodeQL](https://github.com/application-research/delta-chunker/actions/workflows/codeql.yml/badge.svg)](https://github.com/application-research/delta-chunker/actions/workflows/codeql.yml)
