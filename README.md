@@ -1,4 +1,4 @@
-**Note: This repository is no longer maintained. For our new tool in generating cars, go to [delta-car-gen](https://github.com/alvin-reyes/delta-car-gen])**
+**Note: This repository is no longer maintained. For our new tool in generating cars, go to [delta-car-gen](https://github.com/alvin-reyes/delta-car-gen)**
 
 # Δ Delta Chunker
 
